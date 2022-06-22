@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- auditlog.log -->
+    <record id="client_data_form" model="ir.ui.view">
+        <field name="name">client.data.form</field>
+        <field name="model">client.data</field>
+        <field name="arch" type="xml">
+            <form string="Client Resource Information" create='false' edit='false' delete='false'>
+                <sheet>
+                    <group>
+                        <group string="Resource Information" colspan="1">
+                            <field name="partner_id" readonly="1" />
+                            <field name="emp_name" readonly="1" />
+                            <field name="emp_code" readonly="1" />
+                            <field name="partner_company" readonly="1" />
+                        </group>
+                        <group string="Activation Details" colspan="1">
+                            <field name="date" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="client_data_tree">
+        <field name="name">client.data.tree</field>
+        <field name="model">client.data</field>
+        <field name="arch" type="xml">
+            <tree create="false" delete='false'>
+                <field name="partner_id"/>
+                <field name="partner_company"/>
+                <field name="emp_name"/>
+                <field name="date"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_client_data_filter" model="ir.ui.view">
+        <field name="name">client.data.select</field>
+        <field name="model">client.data</field>
+        <field name="arch" type="xml">
+            <search string="Search Client Data">
+                <field name="partner_id"/>
+                <field name="emp_name" />
+                <field name="partner_company"/>
+                <field name="date"/>
+                <group expand="0" string="Group By">
+                    <filter string="Partner" name="partner" domain="[]" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Partner Company" name="partner_company" domain="[]" context="{'group_by': 'partner_company'}"/>
+                    <filter string="Month" name="month" context="{'group_by': 'date'}"/>
+                    <filter string="Employee" name="employee" domain="[]" context="{'group_by': 'emp_name'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record model="ir.actions.act_window" id="action_client_data_tree">
+        <field name="name">Client Data</field>
+        <field name="res_model">client.data</field>
+        <field name="context">{'active_test': False}</field>
+    </record>
+    <menuitem
+        id="data_sync"
+        name="Data Sync"
+        parent="base.menu_custom"
+        sequence="50"
+        groups="base.group_system"
+    />
+    <menuitem
+        id="menu_client_data"
+        name="Client Data"
+        parent="data_sync"
+        action="action_client_data_tree"
+    />
+</odoo>

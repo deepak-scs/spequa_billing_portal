@@ -1,0 +1,9 @@
+<odoo>
+    <record id="employee_creation_invoice_product" model="product.product">
+        <field name="name">Employee Creation Charges</field>
+        <field name="type">service</field>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="uom_po_id" ref="uom.product_uom_unit"/>
+        <field name="description_sale">Per Month employee creation Charges.</field>
+    </record>
+</odoo>

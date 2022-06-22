@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_remote_server,access_remote_server,model_remote_server,,1,1,1,1
+access_client_data,access_client_data,model_client_data,,1,1,1,1
