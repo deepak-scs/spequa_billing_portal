@@ -49,7 +49,7 @@
                 <field name="partner_company"/>
                 <field name="date"/>
                 <group expand="0" string="Group By">
-                    <filter string="Partner" name="partner" domain="[]" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Customer" name="partner" domain="[]" context="{'group_by': 'partner_id'}"/>
                     <filter string="Partner Company" name="partner_company" domain="[]" context="{'group_by': 'partner_company'}"/>
                     <filter string="Month" name="month" context="{'group_by': 'date'}"/>
                     <filter string="Employee" name="employee" domain="[]" context="{'group_by': 'emp_name'}"/>

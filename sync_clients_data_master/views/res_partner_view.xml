@@ -26,6 +26,16 @@
                     <field name="agent_commission" attrs="{'invisible': [('is_agent', '=', True)]}"/>
                     <field name="is_agent" invisible="1"/>
                 </xpath>
+                <xpath expr="//notebook" position="attributes">
+                    <attribute name="attrs">
+                        {'invisible': [
+                            ('is_agent', '=', True)
+                        ]}
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='vat']" position="after">
+                    <field name="pan_number" attrs="{'invisible': [('is_agent', '!=', True)]}"/>
+                </xpath>
             </field>
         </record>
 

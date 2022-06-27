@@ -42,7 +42,6 @@ class RemoteServer(models.Model):
             )
         except:
             _logger.warning("Could not authenticate user on the remote server")
-
         try:
             log_datas = xmlrpclib.ServerProxy(
                 "%s/xmlrpc/object" % (addr)).execute(
@@ -114,14 +113,14 @@ class RemoteServer(models.Model):
     @api.model
     def _generate_customer_bill(self):
         current_date = fields.Date.today()
-        one_month_before_date = fields.Date.today() #current_date + relativedelta(months=-1)
+        one_month_before_date = current_date + relativedelta(months=-1)
         client_datas = self.env['client.data'].with_context(
             active_test=False).search([
                 '|',
-                ('date_end', '=', False),
+                ('date', '=', False),
                 '&',
-                ('date_end', '>=', one_month_before_date),
-                ('date_end', '<=', current_date)
+                ('date', '>=', one_month_before_date),
+                ('date', '<=', current_date)
             ])
         product_id = self.env.ref(
             'sync_clients_data_master.employee_creation_invoice_product')
@@ -136,3 +135,22 @@ class RemoteServer(models.Model):
                 })]
             }
             self.env['account.move'].create(invoice_vals).action_post()
+            # amount_total = move_rec.amount_total
+            # if move_rec.partner_id.agent_id:
+            #     product_id = self.env.ref(
+            #         'sync_clients_data_master.agent_commission_product')
+            #     invoice_vals = {
+            #         'partner_id': move_rec.partner_id.agent_id.id,
+            #         'partner_company_id': move_rec.partner_id.id,
+            #         'invoice_date': fields.Date.today(),
+            #         'move_type': 'in_invoice',
+            #         'invoice_line_ids': [(0, 0, {
+            #             'product_id': product_id.id,
+            #             'quantity': 1,
+            #             'price_unit':
+            #                 amount_total * move_rec.partner_id.agent_commission\
+            #                 / 100.00,
+            #         })]
+            #     }
+            #     move_rec = self.env['account.move'].create(
+            #         invoice_vals).action_post()

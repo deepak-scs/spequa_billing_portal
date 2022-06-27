@@ -14,6 +14,7 @@
         "data/invoice_product_data.xml",
         "views/client_data_view.xml",
         "views/res_partner_view.xml",
+        "views/account_move_views.xml",
     ],
     "application": True,
     "installable": True,

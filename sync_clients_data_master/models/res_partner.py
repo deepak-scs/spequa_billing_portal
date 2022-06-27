@@ -10,3 +10,4 @@ class ResPartner(models.Model):
     agent_id = fields.Many2one('res.partner', string='Agent')
     agent_commission = fields.Float(string='Commission')
     is_agent = fields.Boolean(string='Is Agent')
+    pan_number = fields.Char(string='Pan Number')
