@@ -73,7 +73,12 @@ class RemoteServer(models.Model):
                     'partner_company_id') else '',
                 'date': fields.Date.today(),
             }
-            employee_data.append(vals)
+            client_data_rec = self.env['client.data'].search([
+                ('date', '=', fields.Date.today()),
+                ('emp_code', '=', logdata.get('emp_code')),
+            ], limit=1)
+            if not client_data_rec:
+                employee_data.append(vals)
         self.env['client.data'].create(employee_data)
         server['date_sync'] = datetime.now()
         return True
