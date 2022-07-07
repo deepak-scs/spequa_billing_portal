@@ -7,7 +7,11 @@
     "license": "AGPL-3",
     "website": "www.serpentcs.com",
     "category": "Tools",
-    "depends": ["hr", "mail", 'base_vat'],
+    "depends": [
+        "mail",
+        "base_vat",
+        "l10n_in",
+    ],
     "data": [
         "security/ir.model.access.csv",
         "data/fetch_client_data.xml",
