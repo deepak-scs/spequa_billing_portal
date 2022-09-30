@@ -1,7 +1,7 @@
-import xmlrpc
-import xmlrpc.client
+
 from odoo.exceptions import UserError
-from datetime import datetime, timedelta, date
+import calendar
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from itertools import groupby
 import logging
@@ -18,6 +18,7 @@ _logger = logging.getLogger(__name__)
 class RemoteServer(models.Model):
     _name = "remote.server"
     _description = "Remote Server"
+    _rec_name = 'name'
 
     name = fields.Char("Name", required=1)
     url = fields.Char("Server Url", required=1)
@@ -28,6 +29,7 @@ class RemoteServer(models.Model):
         'res.partner', "Customer", ondelete="cascade", copy=False)
     date_sync = fields.Datetime(
         string="Last Sync Date", default=datetime.now())
+    rate = fields.Float(string='Rate')
 
     def _fetch_client_log_data(self, server):
         log_datas = []
@@ -72,6 +74,7 @@ class RemoteServer(models.Model):
                     'partner_company_id')[1] if logdata.get(
                     'partner_company_id') else '',
                 'date': fields.Date.today(),
+                'remote_server_id': self.id
             }
             client_data_rec = self.env['client.data'].search([
                 ('date', '=', fields.Date.today()),
@@ -117,45 +120,35 @@ class RemoteServer(models.Model):
 
     @api.model
     def _generate_customer_bill(self):
-        current_date = fields.Date.today()
-        one_month_before_date = current_date + relativedelta(months=-1)
+        previous_month_first_date = fields.Date.today() + relativedelta(
+            months=-1, day=1)
+        previous_month_last_date = previous_month_first_date + relativedelta(
+            day=calendar.monthrange(
+                previous_month_first_date.year, previous_month_first_date.month
+            )[1])
         client_datas = self.env['client.data'].with_context(
             active_test=False).search([
                 '|',
                 ('date', '=', False),
                 '&',
-                ('date', '>=', one_month_before_date),
-                ('date', '<=', current_date)
+                ('date', '>=', previous_month_first_date),
+                ('date', '<=', previous_month_last_date)
             ])
         product_id = self.env.ref(
             'sync_clients_data_master.employee_creation_invoice_product')
         for partner, lines in groupby(client_datas, lambda l: l.partner_id):
-            invoice_vals = {
-                'partner_id': partner.id,
-                'move_type': 'out_invoice',
-                'invoice_line_ids': [(0, 0, {
-                    'product_id': product_id.id,
-                    'quantity': len(list(lines)),
-                    'price_unit': product_id.lst_price,
-                })]
-            }
-            self.env['account.move'].create(invoice_vals).action_post()
-            # amount_total = move_rec.amount_total
-            # if move_rec.partner_id.agent_id:
-            #     product_id = self.env.ref(
-            #         'sync_clients_data_master.agent_commission_product')
-            #     invoice_vals = {
-            #         'partner_id': move_rec.partner_id.agent_id.id,
-            #         'partner_company_id': move_rec.partner_id.id,
-            #         'invoice_date': fields.Date.today(),
-            #         'move_type': 'in_invoice',
-            #         'invoice_line_ids': [(0, 0, {
-            #             'product_id': product_id.id,
-            #             'quantity': 1,
-            #             'price_unit':
-            #                 amount_total * move_rec.partner_id.agent_commission\
-            #                 / 100.00,
-            #         })]
-            #     }
-            #     move_rec = self.env['account.move'].create(
-            #         invoice_vals).action_post()
+            for remote_server, lines in groupby(
+                    client_datas.filtered(
+                        lambda l: l.partner_id.id == partner.id
+                    ), lambda l: l.remote_server_id):
+                invoice_vals = {
+                    'partner_id': partner.id,
+                    'move_type': 'out_invoice',
+                    'invoice_line_ids': [(0, 0, {
+                        'product_id': product_id.id,
+                        'quantity': len(list(lines)),
+                        'price_unit': remote_server.rate or 0.0,
+                        'remote_server_id': remote_server.id,
+                    })]
+                }
+                self.env['account.move'].create(invoice_vals).action_post()

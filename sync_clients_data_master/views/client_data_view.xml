@@ -9,13 +9,14 @@
                 <sheet>
                     <group>
                         <group string="Resource Information" colspan="1">
-                            <field name="partner_id" readonly="1" />
-                            <field name="emp_name" readonly="1" />
-                            <field name="emp_code" readonly="1" />
-                            <field name="partner_company" readonly="1" />
+                            <field name="partner_id" readonly="1" options="{'no_open': True}"/>
+                            <field name="emp_name" readonly="1"/>
+                            <field name="emp_code" readonly="1"/>
+                            <field name="partner_company" readonly="1"/>
                         </group>
                         <group string="Activation Details" colspan="1">
                             <field name="date" readonly="1"/>
+                            <field name="remote_server_id" readonly="1" options="{'no_open': True}"/>
                         </group>
                     </group>
                 </sheet>
@@ -48,11 +49,13 @@
                 <field name="emp_name" />
                 <field name="partner_company"/>
                 <field name="date"/>
+                <field name="remote_server_id"/>
                 <group expand="0" string="Group By">
                     <filter string="Customer" name="partner" domain="[]" context="{'group_by': 'partner_id'}"/>
                     <filter string="Partner Company" name="partner_company" domain="[]" context="{'group_by': 'partner_company'}"/>
                     <filter string="Month" name="month" context="{'group_by': 'date'}"/>
                     <filter string="Employee" name="employee" domain="[]" context="{'group_by': 'emp_name'}"/>
+                    <filter string="Remote Server" name="remote_server" domain="[]" context="{'group_by': 'remote_server_id'}"/>
                 </group>
             </search>
         </field>

@@ -15,3 +15,4 @@ class ClientData(models.Model):
     partner_company = fields.Char('Partner Company')
     res_model = fields.Char('Res Model')
     date = fields.Date('Date', tracking=True)
+    remote_server_id = fields.Many2one('remote.server', 'Remote Server')

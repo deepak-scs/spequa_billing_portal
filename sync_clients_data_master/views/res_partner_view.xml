@@ -38,6 +38,7 @@
                                 <field name='user'/>
                                 <field name='password' password="True"/>
                                 <field name='dbname'/>
+                                <field name="rate"/>
                                 <field name='date_sync'/>
                                 <button name="button_sync_partner_data" class="btn date_donebtn-primary" type="object" string="Sync Data" icon="fa-undo"/>
                             </tree>
@@ -59,6 +60,18 @@
                 <xpath expr="//field[@name='vat']" position="after">
                     <field name="pan_number" attrs="{'invisible': [('is_agent', '!=', True)]}"/>
                 </xpath>
+                <xpath expr="//page[@name='contact_addresses']" position="attributes">
+                   <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='sales_purchases']" position="attributes">
+                   <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='internal_notes']" position="attributes">
+                   <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='accounting']" position="attributes">
+                   <attribute name="invisible">1</attribute>
+                </xpath>
             </field>
         </record>
 
@@ -74,7 +87,7 @@
         </record>
 
         <record id="res_partner_action_customer_agent" model="ir.actions.act_window">
-            <field name="name">Customers</field>
+            <field name="name">Agent</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner</field>
             <field name="view_mode">kanban,tree,form</field>
